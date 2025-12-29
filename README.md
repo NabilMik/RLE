@@ -1,254 +1,69 @@
-# RLE Mini-Challenge
+# RLE Mini-Challenge: DQN für Space Invaders
 
-Ziel dieser Mini-Challenge ist es einen Deep Reinforcemen Learning Agenten zu trainieren, der einen möglichst hohen Score im Atari Spiel "Space Invaders" erreicht.
+Deep Reinforcement Learning Agenten für das Atari-Spiel Space Invaders.
 
-In diesem Repository findet ihr ein Template, auf dem ihr eure Lösung implementieren könnt, sowie eine Beispiel-Implementation eines einfachen DQN Agenten.
+## Setup
 
-## Atari Space Invaders Environment
-
-![](https://ale.farama.org/_images/space_invaders.gif)
-
-
-Gym Dokumentation: [https://gymnasium.farama.org/](https://gymnasium.farama.org/)
-
-Gym Space Invaders Dokumentation: [https://ale.farama.org/environments/space_invaders/](https://ale.farama.org/environments/space_invaders/)
-
-
-## Installation
-
-Dieses Projekt verwendet [Astral UV](https://docs.astral.sh/uv/) als Paket- und Umgebungsmanager, der wesentlich schneller als pip und andere Tools ist.
-
-### 1. Astral UV installieren
-
-UV ist ein moderner Python-Paketmanager, der pip, venv, poetry und andere Tools ersetzt. Er ist 10-100x schneller als traditionelle Lösungen.
-
-Für Windows:
-```
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```bash
+pip install -r requirements.txt
 ```
 
-Für macOS und Linux:
-```
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+## Training
 
-### 2. Projekt-Repository klonen
+```bash
+# Baseline
+python baseline_random_agent.py
 
-```
-git clone https://github.com/YanickSchraner/rle-mini-challenge.git
-cd rle-mini-challenge
-```
+# DQN Initial
+python dqn_initial.py
 
-Ein passendes virtual environment wird automatisch erstellt und aktiviert sobald Sie `uv run python <script>.py` ausführen
-
-## Tensorboard
-Einzelne Experimente können in Tensorboard gelogged werden.
-So können diese visualisiert werden:
-```
-uv run tensorboard --logdir runs
+# Erweiterungen
+python double_dqn.py
+python dueling_dqn.py
+python hyperparameter_tuning.py
+python larger_network.py
 ```
 
-## Training starten:
+## Ergebnisse anschauen
 
-PPO Clean RL
-```
-uv run python ppo_clean_rl.py
-```
+```bash
+# TensorBoard für Lernkurven
+tensorboard --logdir runs
 
-DQN Clean RL
-```
-uv run python dqn_clean_rl.py
-```
-
-DQN Yanick
-```
-uv run python dqn_example.py
-```
-
-### Parameters:
-
-#### DQN Clean RL Parameters:
-- `--exp_name`: Experiment name (default: 'dqn_clean_rl')
-- `--seed`: Random seed (default: 1)
-- `--cuda`: Enable CUDA (default: True)
-- `--total_timesteps`: Total timesteps for training (default: 10000000)
-- `--learning_rate`: Learning rate (default: 1e-4)
-- `--buffer_size`: Replay buffer size (default: 1000000)
-- `--gamma`: Discount factor (default: 0.99)
-- `--batch_size`: Batch size (default: 32)
-- `--start_e`: Initial exploration epsilon (default: 1)
-- `--end_e`: Final exploration epsilon (default: 0.01)
-- `--exploration_fraction`: Fraction of timesteps for epsilon decay (default: 0.10)
-- `--learning_starts`: Timesteps before learning starts (default: 80000)
-- `--train_frequency`: Training frequency (default: 4)
-- `--eval_checkpoint`: Path to checkpoint for evaluation only
-
-#### PPO Clean RL Parameters:
-- `--exp_name`: Experiment name (default: 'ppo_clean_rl')
-- `--seed`: Random seed (default: 1)
-- `--cuda`: Enable CUDA (default: True)
-- `--total_timesteps`: Total timesteps for training (default: 10000000)
-- `--learning_rate`: Learning rate (default: 2.5e-4)
-- `--num_envs`: Number of parallel environments (default: 16)
-- `--num_steps`: Steps per environment per rollout (default: 128)
-- `--anneal_lr`: Enable learning rate annealing (default: True)
-- `--gamma`: Discount factor (default: 0.99)
-- `--gae_lambda`: GAE lambda parameter (default: 0.95)
-- `--num_minibatches`: Number of minibatches (default: 4)
-- `--update_epochs`: Number of update epochs (default: 4)
-- `--clip_coef`: PPO clip coefficient (default: 0.1)
-- `--ent_coef`: Entropy coefficient (default: 0.01)
-- `--vf_coef`: Value function coefficient (default: 0.5)
-- `--eval_checkpoint`: Path to checkpoint for evaluation only
-
-#### DQN Yanick Parameters:
-- `--mode`: 'train' or 'eval' mode (default: 'train')
-- `--logdir`: Directory for logs (default: './runs')
-- `--run_name`: Run name (default: current datetime)
-- `--cuda`: Enable CUDA (default: True)
-- `--seed`: Random seed (default: 42)
-- `--gamma`: Discount factor (default: 0.99)
-- `--batch_size`: Batch size (default: 32)
-- `--learning_rate`: Learning rate (default: 2.5e-4)
-- `--num_envs`: Number of parallel environments (default: 16)
-- `--total_steps`: Total training steps (default: 10000000)
-- `--warmup_steps`: Steps to fill replay buffer before training (default: 80000)
-- `--buffer_size`: Replay buffer size (default: 100000)
-- `--exploration_epsilon_initial`: Initial exploration epsilon (default: 1.0)
-- `--exploration_epsilon_final`: Final exploration epsilon (default: 0.1)
-- `--exploration_fraction`: Fraction of training for epsilon decay (default: 0.1)
-- `--train_freq`: Training frequency (default: 4)
-- `--eval_checkpoint`: Path to checkpoint for evaluation mode
-
-### Beispiel: Parameter setzen
-
-Um Parameter beim Ausführen von Skripten mit `uv` zu ändern, fügen Sie sie einfach nach dem Skriptnamen an. Zum Beispiel, um weniger Zeitschritte zu trainieren:
-
-```
-# DQN Clean RL mit 1 Millionen Zeitschritte statt 10 Millionen
-uv run python dqn_clean_rl.py --total_timesteps 1000000
-
-# PPO Clean RL mit 2 Millionen Zeitschritte
-uv run python ppo_clean_rl.py --total_timesteps 2000000 
-
-# DQN Yanick mit 500,000 Zeitschritte (uses --total_steps instead of --total_timesteps)
-uv run python dqn_example.py --total_steps 500000
-```
-
-Sie können mehrere Parameter in derselben Befehlszeile kombinieren:
-
-```
-uv run python dqn_clean_rl.py --total_timesteps 1000000 --learning_rate 5e-4 --seed 42
-```
-
-### Weights & Biases (wandb) Tracking
-
-Die CleanRL-Implementierungen (`ppo_clean_rl.py` und `dqn_clean_rl.py`) unterstützen das Tracking mit Weights & Biases (wandb), einem Tool für ML Experiment Tracking.
-
-#### Einrichtung von wandb
-
-1. **Konto erstellen**: Besuchen Sie [wandb.ai](https://wandb.ai) und erstellen Sie ein kostenloses Konto.
-
-2. **API-Schlüssel kopieren**: Nach der Anmeldung können Sie Ihren API-Schlüssel unter [wandb.ai/authorize](https://wandb.ai/authorize) finden.
-
-3. **wandb installieren und anmelden**:
-```
-uv run wandb login
-```
-Bei der Anmeldung werden Sie aufgefordert, Ihren API-Schlüssel einzugeben.
-
-#### Aktivieren des wandb-Trackings
-
-Um wandb-Tracking mit den CleanRL-Implementierungen zu aktivieren:
-
-```
-# DQN mit wandb-Tracking
-uv run python dqn_clean_rl.py --track --wandb_project_name "space-invaders-dqn"
-
-# PPO mit wandb-Tracking und eigenem Team/Entity
-uv run python ppo_clean_rl.py --track --wandb_project_name "space-invaders-ppo" --wandb_entity "mein-team"
-```
-
-#### Verfügbare wandb-Parameter:
-
-- `--track`: Aktiviert das wandb-Tracking (default: False)
-- `--wandb_project_name`: Name des wandb-Projekts (default: "cleanRL")
-- `--wandb_entity`: Entity/Team für das wandb-Projekt (optional)
-
-Mit wandb können Sie:
-- Trainingsmetriken in Echtzeit verfolgen
-- Hyperparameter und deren Auswirkungen visualisieren
-- Experimente vergleichen und teilen
-- Modellleistung über Zeit analysieren
-
-Nach dem Training können Sie Ihre Ergebnisse unter [wandb.ai/home](https://wandb.ai/home) einsehen.
-
-## Evaluation
-
-PPO Clean RL:
-```
-uv run python ppo_clean_rl.py --eval-checkpoint "runs/{run_name}/{args.exp_name}.cleanrl_model"
-```
-
-DQN Clean RL:
-```
-uv run python dqn_clean_rl.py --eval-checkpoint "runs/{run_name}/{args.exp_name}.cleanrl_model"
-```
-
-DQN Yanick
-```
-uv run python dqn_example.py --eval_checkpoint PATH_TO_CHECKPOINT
+# Visualisierungen
+python visualize_results.py
+python visualize_baseline.py
 ```
 
 ## Projektstruktur
 
-### pyproject.toml
-
-Diese Datei definiert alle Projektabhängigkeiten und die Python-Version (3.10). Sie enthält auch spezielle Konfigurationen für PyTorch mit CUDA-Unterstützung auf Windows.
-
-### run.py
-
-Template für das Implementieren der Lösung.
-
-Es steht euch jedoch offen, ob ihr dieses Template verwendet oder einen eigenen Ansatz verfolgt.
-
-### dqn_example.py
-
-Beispiel-Implementation eines einfachen DQN agent. Kann für die mini-challenge verwendet und erweitert werden.
-
-### dqn_clen_rl.py
-
-Beispiel-Implementation DQN von [CleanRL](https://docs.cleanrl.dev/). Kann für die mini-challenge verwendet und erweitert werden.
-
-### ppo_clen_rl.py
-
-Beispiel-Implementation PPO von [CleanRL](https://docs.cleanrl.dev/). Kann für die mini-challenge verwendet und erweitert werden.
-
-
-### utils/env.py
-
-Beinhaltet die `make_env` Funktion, zum erstellen einer Environment-Instanz.
-
-### utils/utils.py
-
-Beinhaltet nützliche Funktionen und Klassen.
-
-## Fehlerbehebung
-
-### PyTorch CUDA-Probleme
-
-Falls Probleme mit der CUDA-Unterstützung auftreten, überprüfen Sie:
-
-1. Ob eine kompatible NVIDIA-Grafikkarte installiert ist
-2. Ob die neuesten NVIDIA-Treiber installiert sind
-3. Ob CUDA Toolkit installiert ist
-
-Mit dem folgenden Befehl können Sie testen, ob PyTorch CUDA erkennt:
-
 ```
-uv run python -c "import torch; print(torch.cuda.is_available())"
+rle-mini-challenge/
+├── baseline_random_agent.py   # Random Agent Baseline
+├── dqn_initial.py             # Initialer DQN-Ansatz
+├── double_dqn.py              # Erweiterung 1: Double DQN
+├── dueling_dqn.py             # Erweiterung 2: Dueling DQN
+├── hyperparameter_tuning.py   # Erweiterung 3: HP-Tuning
+├── larger_network.py          # Erweiterung 4: Grösseres Netzwerk
+├── results/                   # Evaluationsergebnisse (JSON)
+├── runs/                      # TensorBoard Logs
+├── videos/                    # Aufgezeichnete Gameplay-Videos
+├── bericht/                    # Bericht
+└── requirements.txt           # Python Dependencies
 ```
 
-### Atari ROM-Probleme
+## Ergebnisse
 
-Wenn Fehler bezüglich Atari ROMs auftreten, stellen Sie sicher, dass Sie beim ersten Ausführen die Lizenzvereinbarung akzeptiert haben.
+| Agent | Mean Reward | vs. Baseline |
+|-------|-------------|--------------|
+| DQN Initial | 486.6 | +248% |
+| Double DQN | 484.8 | +247% |
+| Dueling DQN | 448.4 | +221% |
+| Larger Network | 429.1 | +207% |
+| Hyperparameter-Tuning | 337.7 | +142% |
+| Random Baseline | 139.7 | - |
+
+## Hardware
+
+- Apple MacBook M2 (CPU)
+- Trainingszeit: ca. 3-4 Stunden pro Agent
