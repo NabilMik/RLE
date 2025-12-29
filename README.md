@@ -46,8 +46,6 @@ rle-mini-challenge/
 ├── hyperparameter_tuning.py   # Erweiterung 3: HP-Tuning
 ├── larger_network.py          # Erweiterung 4: Grösseres Netzwerk
 ├── results/                   # Evaluationsergebnisse (JSON)
-├── runs/                      # TensorBoard Logs
-├── videos/                    # Aufgezeichnete Gameplay-Videos
 ├── bericht/                    # Bericht
 └── requirements.txt           # Python Dependencies
 ```
